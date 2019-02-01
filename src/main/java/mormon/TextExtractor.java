@@ -48,13 +48,26 @@ public class TextExtractor {
         AnnotatedTextFactory factory = new AnnotatedTextFactory(TextType.BOOK, true);
 
         Map<String, String> sections = extractSections(bookOfMormonFile);
-        for (Map.Entry<String, String> e : sections.entrySet()) {
-            String sectionName = e.getKey();
-            String sectionText = e.getValue();
+        for (Map.Entry<String, String> section : sections.entrySet()) {
+            String sectionName = section.getKey();
+            String sectionText = section.getValue();
 
             if (sectionHasVerses(sectionText)) {
                 if (sectionHasChapters(sectionText)) {
-//                    System.out.println(sectionName);
+                    Map<String, Map<String, String>> chapters = new LinkedHashMap<String, Map<String, String>>();
+
+                    Map<String, String> chapterChunks = extractChaptersFrom(sectionText);
+                    for (Map.Entry<String, String> chapter : chapterChunks.entrySet()) {
+                        String chapterName = chapter.getKey();
+                        String chapterText = chapter.getValue();
+
+                        if (chapterText.trim().length() != 0) {
+                            Map<String, String> verses = extractVersesFrom(chapterText);
+                            chapters.put(chapterName, verses);
+                        }
+                    }
+
+                    factory.addSectionWithChapters(sectionName, chapters);
                 } else {
                     Map<String, String> verses = extractVersesFrom(sectionText);
                     factory.addSectionWithVerses(sectionName, verses);
@@ -65,6 +78,51 @@ public class TextExtractor {
         }
 
         return factory.getAnnotatedText();
+    }
+
+    /**
+     * Helper method. Extracts the chapters out of the section text provided.
+     *
+     * @param sectionText -
+     * @return
+     */
+    private Map<String, String> extractChaptersFrom(String sectionText) {
+        Map<String, String> chapters = new LinkedHashMap<String, String>();
+        Pattern chapterHeaderPattern = Pattern.compile("(\\d+ )*[\\w ]+ \\d+");
+        Pattern nonChapterHeaderPattern = Pattern.compile("Chapter \\d+");
+
+        Scanner scanner = new Scanner(sectionText);
+        StringBuilder chapterText = null;
+        String chapterHeader = null;
+
+        while(scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+
+            if (nonChapterHeaderPattern.matcher(line).matches()) {
+                continue;
+            } else if (chapterHeaderPattern.matcher(line).matches()) {
+                if (chapterHeader != null) {
+                    chapters.put(chapterHeader, chapterText.toString());
+                }
+
+                chapterText = new StringBuilder();
+                chapterHeader = line;
+            } else {
+                if (chapterText == null) {
+                    chapterHeader = "CHAPTER_HEADER";
+                    chapterText = new StringBuilder();
+                }
+
+                chapterText.append(line);
+                chapterText.append('\n');
+            }
+        }
+
+        chapters.put(chapterHeader, chapterText.toString());
+
+        scanner.close();
+
+        return chapters;
     }
 
     /**

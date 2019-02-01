@@ -34,4 +34,32 @@ public class AnnotatedTextFactory {
 
         _textUnderConstruction.addSection(sectionName, section);
     }
+
+    public void addSectionWithChapters(String sectionName, Map<String, Map<String, String>> chapters) {
+        AnnotatedText section = new AnnotatedText(TextType.SECTION, _textUnderConstruction.isMormon());
+
+        for (Map.Entry<String, Map<String, String>> e : chapters.entrySet()) {
+            String chapterName = e.getKey();
+            Map<String, String> verses = e.getValue();
+
+            AnnotatedText chapter = createChapterWithVerses(verses);
+            section.addChapter(chapterName, chapter);
+        }
+
+        _textUnderConstruction.addSection(sectionName, section);
+    }
+
+    private AnnotatedText createChapterWithVerses(Map<String, String> verses) {
+        AnnotatedText chapter = new AnnotatedText(TextType.CHAPTER, _textUnderConstruction.isMormon());
+
+        for (Map.Entry<String, String> verse : verses.entrySet()) {
+            String verseReference = verse.getKey();
+            String verseText = verse.getValue();
+
+            AnnotatedText annotatedVerse = new AnnotatedText(TextType.VERSE, _textUnderConstruction.isMormon(), new Document(verseText));
+            chapter.addVerse(verseReference, annotatedVerse);
+        }
+
+        return chapter;
+    }
 }

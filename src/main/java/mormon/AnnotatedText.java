@@ -68,6 +68,20 @@ public class AnnotatedText {
         _locationsToTexts.put(verseReference, verse);
     }
 
+    /**
+     * Adds a chapter to this annotated text. This text must either be a section or book.
+     *
+     * @param chapterName -
+     * @param chapter -
+     */
+    public void addChapter(String chapterName, AnnotatedText chapter) {
+        if (_type != TextType.SECTION && _type != TextType.BOOK) {
+            throw new RuntimeException("Only sections can have chapters added to them!");
+        }
+
+        _locationsToTexts.put(chapterName, chapter);
+    }
+
     public void setType(TextType type) {
         _type = type;
     }
