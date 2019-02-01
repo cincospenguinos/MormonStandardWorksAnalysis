@@ -53,7 +53,12 @@ public class TextExtractor {
             String sectionText = e.getValue();
 
             if (sectionHasVerses(sectionText)) {
-                System.out.println(sectionName);
+                if (sectionHasChapters(sectionText)) {
+//                    System.out.println(sectionName);
+                } else {
+                    Map<String, String> verses = extractVersesFrom(sectionText);
+                    factory.addSectionWithVerses(sectionName, verses);
+                }
             } else {
                 factory.addSection(sectionName, sectionText);
             }
@@ -63,9 +68,72 @@ public class TextExtractor {
     }
 
     /**
+     * Helper method. Extracts the verses out of the section or chapter text provided.
+     *
+     * @param sectionText -
+     * @return
+     */
+    private Map<String, String> extractVersesFrom(String sectionText) {
+        Map<String, String> verses = new LinkedHashMap<String, String>();
+        Pattern verseHeaderPattern = Pattern.compile("[\\w+ *]+ \\d+:\\d+");
+
+        Scanner scanner = new Scanner(sectionText);
+        StringBuilder verseText = null;
+        String verseReference = null;
+
+        while(scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+
+            if (verseHeaderPattern.matcher(line).matches()) {
+                if (verseText != null) {
+                    verses.put(verseReference, verseText.toString());
+                }
+
+                verseText = new StringBuilder();
+                verseReference = line;
+            } else if (line.trim().length() == 0) {
+                continue;
+            } else {
+                if (verseText == null) {
+                    // We are in the header of the section, and we should add that
+                    verseReference = "SECTION_HEADER";
+                    verseText = new StringBuilder();
+                }
+
+                verseText.append(line);
+                verseText.append('\n');
+            }
+        }
+
+        verses.put(verseReference, verseText.toString());
+
+        return verses;
+    }
+
+    /**
+     * Helper method. Returns whether or not the section has chapters.
+     *
+     * @param sectionText -
+     * @return
+     */
+    private boolean sectionHasChapters(String sectionText) {
+        Scanner scanner = new Scanner(sectionText);
+        boolean foundChapter = false;
+        Pattern pattern = Pattern.compile("Chapter \\d+");
+
+        while(scanner.hasNextLine() && !foundChapter) {
+            String line = scanner.nextLine();
+            foundChapter = pattern.matcher(line).matches();
+        }
+        scanner.close();
+
+        return foundChapter;
+    }
+
+    /**
      * Helper method. Returns whether or not the section provided has verses.
      *
-     * @param section
+     * @param section -
      * @return
      */
     private boolean sectionHasVerses(String section) {
