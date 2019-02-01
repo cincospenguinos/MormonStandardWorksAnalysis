@@ -10,7 +10,7 @@ public class Main {
     private static final String TEXTS_DIR = "src/main/resources/texts/";
 
     public static void main(String[] args) {
-        TextGatherer extractor = new TextGatherer(new File(TEXTS_DIR).listFiles());
-        extractor.gatherTexts();
+        TextGatherer gatherer = new TextGatherer(new File(TEXTS_DIR).listFiles());
+        gatherer.gatherTexts();
     }
 }

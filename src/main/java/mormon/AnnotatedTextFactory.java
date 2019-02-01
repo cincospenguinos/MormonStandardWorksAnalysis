@@ -49,6 +49,11 @@ public class AnnotatedTextFactory {
         _textUnderConstruction.addSection(sectionName, section);
     }
 
+    public void addChapterWithVerses(String chapterName, Map<String, String> verses) {
+        AnnotatedText chapter = createChapterWithVerses(verses);
+        _textUnderConstruction.addChapter(chapterName, chapter);
+    }
+
     private AnnotatedText createChapterWithVerses(Map<String, String> verses) {
         AnnotatedText chapter = new AnnotatedText(TextType.CHAPTER, _textUnderConstruction.isMormon());
 
@@ -62,4 +67,5 @@ public class AnnotatedTextFactory {
 
         return chapter;
     }
+
 }
