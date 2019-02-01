@@ -1,4 +1,4 @@
-package mormon;
+package mormon.model;
 
 import mormon.extractors.BookOfMormonExtractor;
 import mormon.extractors.LateWarExtractor;
@@ -20,11 +20,11 @@ public class TextGatherer {
     private static final String LATE_WAR = "The Late War";
 
     private File[] _files;
-    private Map<String, AnnotatedText> _annotatedTexts; // Maps name to text
+    private List<AnnotatedText> _annotatedTexts; // Maps name to text
 
     public TextGatherer(File[] files) {
         _files = files;
-        _annotatedTexts = new HashMap<String, AnnotatedText>();
+        _annotatedTexts = new ArrayList<AnnotatedText>();
     }
 
     /**
@@ -37,6 +37,42 @@ public class TextGatherer {
     }
 
     /**
+     * Returns all of the mormon texts that have been gathered.
+     *
+     * @return
+     */
+    public List<AnnotatedText> getMormonTexts() {
+        List<AnnotatedText> mormonTexts = new ArrayList<AnnotatedText>();
+
+        for (AnnotatedText text : _annotatedTexts) {
+            if (text.isMormon()) {
+                mormonTexts.add(text);
+            }
+        }
+
+        return mormonTexts;
+    }
+
+    /**
+     * Returns all of the non-mormon texts that have been gathered.
+     *
+     * @return
+     */
+    public List<AnnotatedText> getNonMormonTexts() {
+        List<AnnotatedText> nonMormonTexts = new ArrayList<AnnotatedText>();
+
+        for (AnnotatedText text : _annotatedTexts) {
+            if (!text.isMormon()) {
+                nonMormonTexts.add(text);
+            }
+        }
+
+        return nonMormonTexts;
+    }
+
+
+
+    /**
      * Helper method. Gets the extracted text from the file and places it where it is needed.
      *
      * @param file
@@ -44,10 +80,10 @@ public class TextGatherer {
     private void getExtractedText(File file) {
         if (file.getName().equals(BOOK_OF_MORMON_FILENAME)) {
             AnnotatedText bookOfMormon = new BookOfMormonExtractor().extractText(file);
-            _annotatedTexts.put(BOOK_OF_MORMON, bookOfMormon);
+            _annotatedTexts.add(bookOfMormon);
         } else if (file.getName().equals(LATE_WAR_FILENAME)) {
             AnnotatedText lateWar = new LateWarExtractor().extractText(file);
-            _annotatedTexts.put(LATE_WAR, lateWar);
+            _annotatedTexts.add(lateWar);
         } else {
             throw new RuntimeException("No extractor found for the file provided!");
         }

@@ -1,9 +1,9 @@
 package mormon.extractors;
 
-import mormon.AnnotatedText;
-import mormon.AnnotatedTextFactory;
-import mormon.Pair;
-import mormon.TextType;
+import mormon.model.AnnotatedText;
+import mormon.model.AnnotatedTextFactory;
+import mormon.model.Pair;
+import mormon.model.TextType;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class LateWarExtractor implements TextExtractor {
     public AnnotatedText extractText(File textFile) {
         AnnotatedTextFactory factory = new AnnotatedTextFactory(TextType.BOOK, false);
+        factory.setName("The Late War");
 
         for (Map.Entry<String, Pair<String, String>> chapter : extractChaptersFrom(textFile).entrySet()) {
             String chapterName = chapter.getKey();

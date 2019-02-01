@@ -1,4 +1,4 @@
-package mormon;
+package mormon.model;
 
 import edu.stanford.nlp.simple.Document;
 
@@ -68,4 +68,7 @@ public class AnnotatedTextFactory {
         return chapter;
     }
 
+    public void setName(String name) {
+        _textUnderConstruction.setName(name);
+    }
 }

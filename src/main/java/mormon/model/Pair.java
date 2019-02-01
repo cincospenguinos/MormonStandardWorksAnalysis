@@ -1,4 +1,4 @@
-package mormon;
+package mormon.model;
 
 /**
  * Pair class.

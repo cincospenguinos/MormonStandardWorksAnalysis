@@ -1,6 +1,6 @@
 package mormon.extractors;
 
-import mormon.AnnotatedText;
+import mormon.model.AnnotatedText;
 
 import java.io.File;
 

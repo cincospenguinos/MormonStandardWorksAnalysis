@@ -1,8 +1,8 @@
 package mormon.extractors;
 
-import mormon.AnnotatedText;
-import mormon.AnnotatedTextFactory;
-import mormon.TextType;
+import mormon.model.AnnotatedText;
+import mormon.model.AnnotatedTextFactory;
+import mormon.model.TextType;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -16,6 +16,7 @@ public class BookOfMormonExtractor implements TextExtractor {
 
     public AnnotatedText extractText(File bookOfMormonFile) {
         AnnotatedTextFactory factory = new AnnotatedTextFactory(TextType.BOOK, true);
+        factory.setName("The Book of Mormon");
 
         Map<String, String> sections = extractSections(bookOfMormonFile);
         for (Map.Entry<String, String> section : sections.entrySet()) {

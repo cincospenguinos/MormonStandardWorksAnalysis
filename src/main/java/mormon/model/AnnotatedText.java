@@ -1,4 +1,4 @@
-package mormon;
+package mormon.model;
 
 import edu.stanford.nlp.simple.Document;
 
@@ -18,6 +18,7 @@ public class AnnotatedText {
 
     private TextType _type; // The type of text--book, scriptural book (like Nephi or Isaiah,) chapter, verse
     private boolean _isMormon;
+    private String _name; // Name of this text
 
     public AnnotatedText(TextType type, boolean isMormon) {
         _type = type;
@@ -88,5 +89,9 @@ public class AnnotatedText {
 
     public boolean isMormon() {
         return _isMormon;
+    }
+
+    public void setName(String name) {
+        _name = name;
     }
 }
