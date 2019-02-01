@@ -1,5 +1,5 @@
 package mormon;
 
 public enum TextType {
-    BOOK, SCRIPTURAL_BOOK, CHAPTER, VERSE;
+    BOOK, SECTION, CHAPTER, VERSE;
 }

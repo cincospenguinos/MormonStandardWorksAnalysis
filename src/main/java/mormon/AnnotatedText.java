@@ -2,10 +2,7 @@ package mormon;
 
 import edu.stanford.nlp.simple.Document;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * AnnotatedText
@@ -16,35 +13,52 @@ import java.util.Map;
 public class AnnotatedText {
 
     private Map<String, AnnotatedText> _locationsToTexts; // Maps text locations (introduction, book, chapter, etc.) to texts
-    private List<String> _locations; // Locations within the text, in order of appearance
 
     private Document _text; // The literal text itself. Only relevant to leaf-node types (chapter, verse)
 
     private TextType _type; // The type of text--book, scriptural book (like Nephi or Isaiah,) chapter, verse
     private boolean _isMormon;
 
-    public AnnotatedText(TextType type, boolean isMormon, Document text) {
+    public AnnotatedText(TextType type, boolean isMormon) {
         _type = type;
         _isMormon = isMormon;
 
         switch(_type) {
-        case BOOK:
-            if (text == null) {
-                throw new RuntimeException("Text must be included with text of this type!");
-            }
-
-            _text = text;
-            break;
-        case SCRIPTURAL_BOOK:
-            if (text != null) {
-                _text = text;
+            case BOOK:
+            case SECTION:
+            case CHAPTER:
+                _locationsToTexts = new LinkedHashMap<String, AnnotatedText>();
                 break;
-            }
-        case CHAPTER:
-        case VERSE:
-            _locations = new ArrayList<String>();
-            _locationsToTexts = new HashMap<String, AnnotatedText>();
-            break;
+            case VERSE:
+                break;
         }
+    }
+
+    public AnnotatedText(TextType type, boolean isMormon, Document text) {
+        _type = type;
+        _isMormon = isMormon;
+        _text = text;
+    }
+
+    /**
+     * Adds a section to this annotated text. This text must be a book.
+     *
+     * @param sectionName -
+     * @param section -
+     */
+    public void addSection(String sectionName, AnnotatedText section) {
+        if (_type != TextType.BOOK) {
+            throw new RuntimeException("Only books may have a section added to them!");
+        }
+
+        _locationsToTexts.put(sectionName, section);
+    }
+
+    public void setType(TextType type) {
+        _type = type;
+    }
+
+    public boolean isMormon() {
+        return _isMormon;
     }
 }
