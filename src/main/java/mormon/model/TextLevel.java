@@ -1,5 +1,5 @@
 package mormon.model;
 
-public enum TextType {
+public enum TextLevel {
     BOOK, SECTION, CHAPTER, VERSE;
 }

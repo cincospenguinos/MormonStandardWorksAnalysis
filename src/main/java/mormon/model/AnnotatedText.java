@@ -16,15 +16,15 @@ public class AnnotatedText {
 
     private Document _text; // The literal text itself. Only relevant to leaf-node types (chapter, verse)
 
-    private TextType _type; // The type of text--book, scriptural book (like Nephi or Isaiah,) chapter, verse
+    private TextLevel _textLevel;
     private boolean _isMormon;
-    private String _name; // Name of this text
+    private String _name;
 
-    public AnnotatedText(TextType type, boolean isMormon) {
-        _type = type;
+    public AnnotatedText(TextLevel type, boolean isMormon) {
+        _textLevel = type;
         _isMormon = isMormon;
 
-        switch(_type) {
+        switch(_textLevel) {
             case BOOK:
             case SECTION:
             case CHAPTER:
@@ -35,10 +35,30 @@ public class AnnotatedText {
         }
     }
 
-    public AnnotatedText(TextType type, boolean isMormon, Document text) {
-        _type = type;
+    public AnnotatedText(TextLevel type, boolean isMormon, Document text) {
+        _textLevel = type;
         _isMormon = isMormon;
         _text = text;
+    }
+
+    /**
+     * Returns an AnnotatedText chunked to the level provided. Essentially creates a leaf node
+     * out of the current node.
+     *
+     * @param level -
+     * @return
+     */
+    public AnnotatedText getTextAtLevel(TextLevel level) {
+        throw new RuntimeException("Implement me!");
+    }
+
+    /**
+     * Returns a list of NGrams extracted from the current _text of this AnnotatedText.
+     *
+     * @param n -
+     */
+    public List<NGram> extractNGrams(int n) {
+        throw new RuntimeException("Implement me!");
     }
 
     /**
@@ -48,7 +68,7 @@ public class AnnotatedText {
      * @param section -
      */
     public void addSection(String sectionName, AnnotatedText section) {
-        if (_type != TextType.BOOK) {
+        if (_textLevel != TextLevel.BOOK) {
             throw new RuntimeException("Only books may have a section added to them!");
         }
 
@@ -62,7 +82,7 @@ public class AnnotatedText {
      * @param verse -
      */
     public void addVerse(String verseReference, AnnotatedText verse) {
-        if (_type != TextType.SECTION && _type != TextType.CHAPTER) {
+        if (_textLevel != TextLevel.SECTION && _textLevel != TextLevel.CHAPTER) {
             throw new RuntimeException("Only sections and chapters may have verses added to them!");
         }
 
@@ -76,15 +96,15 @@ public class AnnotatedText {
      * @param chapter -
      */
     public void addChapter(String chapterName, AnnotatedText chapter) {
-        if (_type != TextType.SECTION && _type != TextType.BOOK) {
+        if (_textLevel != TextLevel.SECTION && _textLevel != TextLevel.BOOK) {
             throw new RuntimeException("Only sections can have chapters added to them!");
         }
 
         _locationsToTexts.put(chapterName, chapter);
     }
 
-    public void setType(TextType type) {
-        _type = type;
+    public void setType(TextLevel type) {
+        _textLevel = type;
     }
 
     public boolean isMormon() {

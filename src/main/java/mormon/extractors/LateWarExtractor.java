@@ -3,7 +3,7 @@ package mormon.extractors;
 import mormon.model.AnnotatedText;
 import mormon.model.AnnotatedTextFactory;
 import mormon.model.Pair;
-import mormon.model.TextType;
+import mormon.model.TextLevel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 
 public class LateWarExtractor implements TextExtractor {
     public AnnotatedText extractText(File textFile) {
-        AnnotatedTextFactory factory = new AnnotatedTextFactory(TextType.BOOK, false);
+        AnnotatedTextFactory factory = new AnnotatedTextFactory(TextLevel.BOOK, false);
         factory.setName("The Late War");
 
         for (Map.Entry<String, Pair<String, String>> chapter : extractChaptersFrom(textFile).entrySet()) {

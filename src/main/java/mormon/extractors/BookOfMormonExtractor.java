@@ -2,7 +2,7 @@ package mormon.extractors;
 
 import mormon.model.AnnotatedText;
 import mormon.model.AnnotatedTextFactory;
-import mormon.model.TextType;
+import mormon.model.TextLevel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 public class BookOfMormonExtractor implements TextExtractor {
 
     public AnnotatedText extractText(File bookOfMormonFile) {
-        AnnotatedTextFactory factory = new AnnotatedTextFactory(TextType.BOOK, true);
+        AnnotatedTextFactory factory = new AnnotatedTextFactory(TextLevel.BOOK, true);
         factory.setName("The Book of Mormon");
 
         Map<String, String> sections = extractSections(bookOfMormonFile);

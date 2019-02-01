@@ -8,12 +8,12 @@ public class AnnotatedTextFactory {
 
     private AnnotatedText _textUnderConstruction;
 
-    public AnnotatedTextFactory(TextType type, boolean isMormon) {
+    public AnnotatedTextFactory(TextLevel type, boolean isMormon) {
         _textUnderConstruction = new AnnotatedText(type, isMormon);
     }
 
     public void addSection(String sectionName, String sectionText) {
-        AnnotatedText section = new AnnotatedText(TextType.SECTION, _textUnderConstruction.isMormon(), new Document(sectionText));
+        AnnotatedText section = new AnnotatedText(TextLevel.SECTION, _textUnderConstruction.isMormon(), new Document(sectionText));
         _textUnderConstruction.addSection(sectionName, section);
     }
 
@@ -22,13 +22,13 @@ public class AnnotatedTextFactory {
     }
 
     public void addSectionWithVerses(String sectionName, Map<String, String> verses) {
-        AnnotatedText section = new AnnotatedText(TextType.SECTION, _textUnderConstruction.isMormon());
+        AnnotatedText section = new AnnotatedText(TextLevel.SECTION, _textUnderConstruction.isMormon());
 
         for (Map.Entry<String, String> e : verses.entrySet()) {
             String verseReference = e.getKey();
             String verseText = e.getValue();
 
-            AnnotatedText verse = new AnnotatedText(TextType.VERSE, _textUnderConstruction.isMormon(), new Document(verseText));
+            AnnotatedText verse = new AnnotatedText(TextLevel.VERSE, _textUnderConstruction.isMormon(), new Document(verseText));
             section.addVerse(verseReference, verse);
         }
 
@@ -36,7 +36,7 @@ public class AnnotatedTextFactory {
     }
 
     public void addSectionWithChapters(String sectionName, Map<String, Map<String, String>> chapters) {
-        AnnotatedText section = new AnnotatedText(TextType.SECTION, _textUnderConstruction.isMormon());
+        AnnotatedText section = new AnnotatedText(TextLevel.SECTION, _textUnderConstruction.isMormon());
 
         for (Map.Entry<String, Map<String, String>> e : chapters.entrySet()) {
             String chapterName = e.getKey();
@@ -55,13 +55,13 @@ public class AnnotatedTextFactory {
     }
 
     private AnnotatedText createChapterWithVerses(Map<String, String> verses) {
-        AnnotatedText chapter = new AnnotatedText(TextType.CHAPTER, _textUnderConstruction.isMormon());
+        AnnotatedText chapter = new AnnotatedText(TextLevel.CHAPTER, _textUnderConstruction.isMormon());
 
         for (Map.Entry<String, String> verse : verses.entrySet()) {
             String verseReference = verse.getKey();
             String verseText = verse.getValue();
 
-            AnnotatedText annotatedVerse = new AnnotatedText(TextType.VERSE, _textUnderConstruction.isMormon(), new Document(verseText));
+            AnnotatedText annotatedVerse = new AnnotatedText(TextLevel.VERSE, _textUnderConstruction.isMormon(), new Document(verseText));
             chapter.addVerse(verseReference, annotatedVerse);
         }
 
