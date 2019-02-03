@@ -37,7 +37,12 @@ public class NGram {
     }
 
     public int hashCode() {
-        return Objects.hash(_words);
+        StringBuilder builder = new StringBuilder();
+        for (String str : _words) {
+            builder.append(str);
+            builder.append("__");
+        }
+        return Objects.hash(builder.toString());
     }
 
     public int length() {

@@ -5,13 +5,17 @@ import mormon.model.NGram;
 import mormon.report.AnalysisReport;
 import mormon.report.SimpleNGramReport;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
+/**
+ * SimpleNGramAnalysis
+ *
+ * Does simple NGram analysis on the texts provided. Counts number of unique NGrams between the two texts.
+ */
 public class SimpleNGramAnalysis extends AnnotatedTextAnalyzer {
 
-    private Map<NGram, Integer> nGramSimilarityCounts; // Maps NGrams to how many times they are similar between the two texts.
+    // Maps NGram size to Set of NGrams that are similar to the two texts
+    private Map<Integer, Set<NGram>> nGramSimilarityCounts;
 
     // Maps the NGram size to the number of NGrams of that size in each text
     private Map<Integer, Integer> textANGramSize;
@@ -39,11 +43,11 @@ public class SimpleNGramAnalysis extends AnnotatedTextAnalyzer {
                 .filter(nGram -> nGram.length() == n)
                 .forEach(nGram -> {
                     if (nGramsTextB.contains(nGram)) {
-                        if (nGramSimilarityCounts.containsKey(nGram)) {
-                            nGramSimilarityCounts.put(nGram, nGramSimilarityCounts.get(nGram) + 1);
-                        } else {
-                            nGramSimilarityCounts.put(nGram, 1);
+                        if (!nGramSimilarityCounts.containsKey(n)) {
+                            nGramSimilarityCounts.put(n, new HashSet<>());
                         }
+
+                        nGramSimilarityCounts.get(n).add(nGram);
                     }
                 });
 
@@ -62,14 +66,8 @@ public class SimpleNGramAnalysis extends AnnotatedTextAnalyzer {
         SimpleNGramReport finalReport = new SimpleNGramReport();
 
         for (int n : AnnotatedText.N_GRAM_VALUES) {
-            nGramSimilarityCounts.entrySet().stream()
-                .filter(e -> e.getKey().length() == n)
-                .forEach(e -> {
-                    int totalSimilar = (int) nGramSimilarityCounts.entrySet().stream()
-                            .filter(e1 -> e1.getKey().length() == n).count();
-
-                    finalReport.addNGramCounts(n, textANGramSize.get(n), textBNGramSize.get(n), totalSimilar);
-                });
+            Set<NGram> nGramSet = nGramSimilarityCounts.get(n);
+            finalReport.addNGramCounts(n, textANGramSize.get(n), textBNGramSize.get(n), nGramSet.size());
         }
 
         return finalReport;
