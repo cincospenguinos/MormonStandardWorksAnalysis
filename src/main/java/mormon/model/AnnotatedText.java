@@ -193,4 +193,8 @@ public class AnnotatedText {
     public Document getText() {
         return _text;
     }
+
+    public String getName() {
+        return _name;
+    }
 }

@@ -23,7 +23,10 @@ public class Main {
                 SimpleNGramAnalysis simpleAnalysis = new SimpleNGramAnalysis(mormonText, nonMormonText);
                 simpleAnalysis.performAnalysis();
                 AnalysisReport report = simpleAnalysis.generateReport();
-                System.out.println(report.toJsonStrings());
+
+                for (String s : report.toJsonStrings().values()) {
+                    System.out.println(s);
+                }
             }
         }
     }

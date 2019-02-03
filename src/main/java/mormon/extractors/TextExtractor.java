@@ -12,6 +12,8 @@ import java.io.File;
  */
 public interface TextExtractor {
 
+    public static final String META_INFO = "META_INFO";
+
     /**
      * Extracts the text found in the file provided and returns an AnnotatedText object of that text.
      *
