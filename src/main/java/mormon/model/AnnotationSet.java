@@ -33,4 +33,23 @@ public class AnnotationSet {
         Set<Pair<NGram, Integer>> annotations = annotationSet.get(nGram.length());
         annotations.add(new Pair<NGram, Integer>(nGram, index));
     }
+
+    /**
+     * Returns all of the NGrams of the size provided.
+     *
+     * @param nGramSize -
+     * @return -
+     */
+    public Set<NGram> getAllNGramsOfSize(int nGramSize) {
+        Set<Pair<NGram, Integer>> nGramSet = annotationSet.get(nGramSize);
+        Set<NGram> nGramsToReturn = new HashSet<NGram>();
+
+        if (nGramSet != null) {
+            for (Pair<NGram, Integer> p : nGramSet) {
+                nGramsToReturn.add(p.getFirst());
+            }
+        }
+
+        return nGramsToReturn;
+    }
 }

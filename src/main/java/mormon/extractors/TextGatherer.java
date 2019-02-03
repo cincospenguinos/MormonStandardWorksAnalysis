@@ -1,7 +1,8 @@
-package mormon.model;
+package mormon.extractors;
 
 import mormon.extractors.BookOfMormonExtractor;
 import mormon.extractors.LateWarExtractor;
+import mormon.model.AnnotatedText;
 
 import java.io.File;
 import java.util.*;

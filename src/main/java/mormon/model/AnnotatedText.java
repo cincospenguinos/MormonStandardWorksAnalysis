@@ -75,7 +75,23 @@ public class AnnotatedText {
             throw new RuntimeException("Only books may have a section added to them!");
         }
 
+        section.setName(sectionName);
         _locationsToTexts.put(sectionName, section);
+    }
+
+    /**
+     * Adds a chapter to this annotated text. This text must either be a section or book.
+     *
+     * @param chapterName -
+     * @param chapter -
+     */
+    public void addChapter(String chapterName, AnnotatedText chapter) {
+        if (_textLevel != TextLevel.SECTION && _textLevel != TextLevel.BOOK) {
+            throw new RuntimeException("Only sections can have chapters added to them!");
+        }
+
+        chapter.setName(chapterName);
+        _locationsToTexts.put(chapterName, chapter);
     }
 
     /**
@@ -89,7 +105,28 @@ public class AnnotatedText {
             throw new RuntimeException("Only sections and chapters may have verses added to them!");
         }
 
+        verse.setName(verseReference);
         _locationsToTexts.put(verseReference, verse);
+    }
+
+    /**
+     * Returns all of the NGrams found in this annotation, mapping their size to the set of NGrams.
+     *
+     * @return Map
+     */
+    public Collection<NGram> getAllNGrams() {
+        Collection<NGram> nGrams = new HashSet<NGram>();
+        if (isLeafNode()) {
+            for (int n : N_GRAM_VALUES) {
+                nGrams.addAll(_annotationSet.getAllNGramsOfSize(n));
+            }
+        } else {
+            for (AnnotatedText t : _locationsToTexts.values()) {
+                nGrams.addAll(t.getAllNGrams());
+            }
+        }
+
+        return nGrams;
     }
 
     /**
@@ -137,18 +174,8 @@ public class AnnotatedText {
         }
     }
 
-    /**
-     * Adds a chapter to this annotated text. This text must either be a section or book.
-     *
-     * @param chapterName -
-     * @param chapter -
-     */
-    public void addChapter(String chapterName, AnnotatedText chapter) {
-        if (_textLevel != TextLevel.SECTION && _textLevel != TextLevel.BOOK) {
-            throw new RuntimeException("Only sections can have chapters added to them!");
-        }
-
-        _locationsToTexts.put(chapterName, chapter);
+    private boolean isLeafNode() {
+        return _text != null;
     }
 
     public void setType(TextLevel type) {
@@ -165,9 +192,5 @@ public class AnnotatedText {
 
     public Document getText() {
         return _text;
-    }
-
-    private boolean isLeafNode() {
-        return _text != null;
     }
 }

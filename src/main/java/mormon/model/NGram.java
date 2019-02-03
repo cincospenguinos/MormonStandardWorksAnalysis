@@ -1,5 +1,7 @@
 package mormon.model;
 
+import java.util.Objects;
+
 public class NGram {
 
     private String[] _words;
@@ -32,6 +34,10 @@ public class NGram {
         }
 
         return false;
+    }
+
+    public int hashCode() {
+        return Objects.hash(_words);
     }
 
     public int length() {

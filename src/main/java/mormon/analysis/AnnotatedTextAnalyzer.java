@@ -1,13 +1,7 @@
 package mormon.analysis;
 
-import mormon.model.AnalysisReport;
 import mormon.model.AnnotatedText;
-import mormon.model.NGram;
-import mormon.model.TextLevel;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import mormon.report.AnalysisReport;
 
 /**
  * AnnotatedTextAnalyzer
@@ -21,17 +15,14 @@ public abstract class AnnotatedTextAnalyzer {
     private AnnotatedText textB;
 
     /**
-     * Performs similarity analysis on the two texts associated with this analyzer at
-     * the textual levels provided.
-     *
-     * @param levelA -
-     * @param levelB -
+     * Performs some form of analysis on the two texts provided. What this analysis is depends wholly upon the
+     * implementation of the analyzer.
      */
-    public abstract void performAnalysis(TextLevel levelA, TextLevel levelB);
+    public abstract void performAnalysis();
 
     /**
-     * Returns an AnalysisReport of the type of analysis that the analyzer does. If the analysis is N-Gram similarity,
-     * then this would return a report with that information.
+     * Returns an AnalysisReport of the type of analysis that the analyzer does. This depends wholly upon the implementation
+     * of the Analyzer.
      *
      * @return an AnalysisReport
      */

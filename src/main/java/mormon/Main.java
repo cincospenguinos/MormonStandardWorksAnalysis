@@ -1,9 +1,9 @@
 package mormon;
 
-import mormon.analysis.AnnotatedTextAnalyzer;
+import mormon.report.AnalysisReport;
+import mormon.analysis.SimpleNGramAnalysis;
 import mormon.model.AnnotatedText;
-import mormon.model.TextGatherer;
-import mormon.model.TextLevel;
+import mormon.extractors.TextGatherer;
 
 import java.io.File;
 
@@ -17,5 +17,14 @@ public class Main {
     public static void main(String[] args) {
         TextGatherer gatherer = new TextGatherer(new File(TEXTS_DIR).listFiles());
         gatherer.gatherTexts();
+
+        for (AnnotatedText mormonText : gatherer.getMormonTexts()) {
+            for (AnnotatedText nonMormonText : gatherer.getNonMormonTexts()) {
+                SimpleNGramAnalysis simpleAnalysis = new SimpleNGramAnalysis(mormonText, nonMormonText);
+                simpleAnalysis.performAnalysis();
+                AnalysisReport report = simpleAnalysis.generateReport();
+                System.out.println(report.toJsonStrings());
+            }
+        }
     }
 }

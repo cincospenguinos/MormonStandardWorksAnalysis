@@ -79,11 +79,14 @@ public class LateWarExtractor implements TextExtractor {
         Map<String, String> verses = new LinkedHashMap<String, String>();
 
         String[] verseChunks = chapterText.split("\\d+");
-        for (int i = 0; i < verseChunks.length; i++) {
-            String verseName = "verse " + (i + 1);
-            String verseText = verseChunks[i];
+        int verseNumber = 1;
 
-            verses.put(verseName, verseText);
+        for (String verseText : verseChunks) {
+            if (verseText.trim().length() != 0) {
+                String verseName = "verse " + verseNumber;
+                verses.put(verseName, verseText);
+                verseNumber++;
+            }
         }
 
         return verses;
