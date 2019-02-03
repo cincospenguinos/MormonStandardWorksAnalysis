@@ -59,7 +59,7 @@ public class SimpleNGramAnalysis extends AnnotatedTextAnalyzer {
      */
     @Override
     public AnalysisReport generateReport() {
-        SimpleNGramReport finalReport = new SimpleNGramReport(this.getTextA().getName(), this.getTextB().getName());
+        SimpleNGramReport finalReport = new SimpleNGramReport();
 
         for (int n : AnnotatedText.N_GRAM_VALUES) {
             nGramSimilarityCounts.entrySet().stream()

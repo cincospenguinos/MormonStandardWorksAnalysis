@@ -1,28 +1,25 @@
 package mormon.report;
 
 import com.google.gson.Gson;
-import mormon.model.Pair;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleNGramReport implements AnalysisReport {
 
-    private Map<Integer, NGramCount> nGramCountMap;
-    private Pair<String, String> textNames;
+    public static final String SIMILARITY_REPORT_NAME = "ngram_similarity";
 
-    public SimpleNGramReport(String textAName, String textBName) {
+    private Map<Integer, NGramCount> nGramCountMap;
+
+    public SimpleNGramReport() {
         nGramCountMap = new HashMap<>();
-        textNames = new Pair<>(textAName, textBName);
     }
 
     @Override
     public Map<String, String> toJsonStrings() {
         Gson gson = new Gson();
         Map<String, String> jsonReport = new HashMap<>();
-        String reportName = textNames.getFirst().replaceAll("\\s+", "_") + "_"
-                + textNames.getSecond().replaceAll("\\s+", "_");
-        jsonReport.put(reportName, gson.toJson(nGramCountMap));
+        jsonReport.put(SIMILARITY_REPORT_NAME, gson.toJson(nGramCountMap));
         return jsonReport;
     }
 
