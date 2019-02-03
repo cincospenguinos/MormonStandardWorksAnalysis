@@ -1,6 +1,7 @@
 package mormon.model;
 
 import edu.stanford.nlp.simple.Document;
+import edu.stanford.nlp.simple.Sentence;
 
 import java.util.*;
 
@@ -12,13 +13,19 @@ import java.util.*;
  */
 public class AnnotatedText {
 
-    private Map<String, AnnotatedText> _locationsToTexts; // Maps text locations (introduction, book, chapter, etc.) to texts
-
-    private Document _text; // The literal text itself. Only relevant to leaf-node types (chapter, verse)
+    // The values for N in generating NGrams internally
+    public static final int[] N_GRAM_VALUES = { 1, 2, 3, 4, 5 };
 
     private TextLevel _textLevel;
     private boolean _isMormon;
     private String _name;
+
+    // Non-leaf node information
+    private Map<String, AnnotatedText> _locationsToTexts;
+
+    // Leaf node information
+    private Document _text; // The literal text itself. Only relevant to leaf-node types (chapter, verse)
+    private AnnotationSet _annotationSet; // The set of annotations to be generated from the text
 
     public AnnotatedText(TextLevel type, boolean isMormon) {
         _textLevel = type;
@@ -39,26 +46,22 @@ public class AnnotatedText {
         _textLevel = type;
         _isMormon = isMormon;
         _text = text;
+        _annotationSet = new AnnotationSet();
     }
 
     /**
-     * Returns an AnnotatedText chunked to the level provided. Essentially creates a leaf node
-     * out of the current node.
-     *
-     * @param level -
-     * @return
+     * Annotates the text, gathering NGrams up and putting them into the annotation set.
      */
-    public AnnotatedText getTextAtLevel(TextLevel level) {
-        throw new RuntimeException("Implement me!");
-    }
+    public void annotate() {
+        if (isLeafNode()) {
+            generateAnnotationSet();
+            return;
+        }
 
-    /**
-     * Returns a list of NGrams extracted from the current _text of this AnnotatedText.
-     *
-     * @param n -
-     */
-    public List<NGram> extractNGrams(int n) {
-        throw new RuntimeException("Implement me!");
+        // Go down to each leaf node and annotate themselves
+        for (AnnotatedText t : _locationsToTexts.values()) {
+            t.annotate();
+        }
     }
 
     /**
@@ -90,6 +93,51 @@ public class AnnotatedText {
     }
 
     /**
+     * Helper method. Gathers the various annotations and puts them into this object. To be called only on leaf nodes.
+     */
+    private void generateAnnotationSet() {
+        if (!isLeafNode()) {
+            throw new RuntimeException("Cannot call this method on non-leaf nodes!");
+        }
+
+        for (Sentence sentence : _text.sentences()) {
+            for (int i = 0; i < N_GRAM_VALUES.length; i++) {
+                int n = N_GRAM_VALUES[i];
+                addNGrams(n, sentence);
+            }
+        }
+    }
+
+    /**
+     * Helper method. Adds NGrams to the annotation set, given a size and sentence to generate them from.
+     *
+     * @param nGramSize -
+     * @param sentence -
+     */
+    private void addNGrams(int nGramSize, Sentence sentence) {
+        List<String> words = sentence.words();
+
+        for (int wordIndex = 0; wordIndex < words.size(); wordIndex++) {
+            boolean pastEndOfSentence = (wordIndex + nGramSize> words.size());
+
+            if (!pastEndOfSentence) {
+                LinkedList<String> wordSet = new LinkedList<String>();
+                wordSet.add(words.get(wordIndex));
+
+                for (int i = 1; i < nGramSize; i++) {
+                    wordSet.add(words.get(wordIndex + i));
+                }
+
+                String[] nGramWords = wordSet.toArray(new String[0]);
+                NGram nGram = new NGram(nGramWords);
+                _annotationSet.addNGram(nGram, wordIndex);
+            } else {
+                break;
+            }
+        }
+    }
+
+    /**
      * Adds a chapter to this annotated text. This text must either be a section or book.
      *
      * @param chapterName -
@@ -113,5 +161,13 @@ public class AnnotatedText {
 
     public void setName(String name) {
         _name = name;
+    }
+
+    public Document getText() {
+        return _text;
+    }
+
+    private boolean isLeafNode() {
+        return _text != null;
     }
 }

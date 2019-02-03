@@ -17,12 +17,5 @@ public class Main {
     public static void main(String[] args) {
         TextGatherer gatherer = new TextGatherer(new File(TEXTS_DIR).listFiles());
         gatherer.gatherTexts();
-
-        for (AnnotatedText mormonText : gatherer.getMormonTexts()) {
-            for (AnnotatedText nonMormonText : gatherer.getNonMormonTexts()) {
-                AnnotatedTextAnalyzer analyzer = new AnnotatedTextAnalyzer(mormonText, nonMormonText);
-                analyzer.performSimilarityAnalysis(TextLevel.BOOK, TextLevel.BOOK);
-            }
-        }
     }
 }

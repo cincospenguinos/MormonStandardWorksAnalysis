@@ -32,7 +32,9 @@ public class TextGatherer {
      */
     public void gatherTexts() {
         for (File f : _files) {
-            getExtractedText(f);
+            AnnotatedText text = getExtractedText(f);
+            text.annotate();
+            _annotatedTexts.add(text);
         }
     }
 
@@ -70,22 +72,24 @@ public class TextGatherer {
         return nonMormonTexts;
     }
 
-
+    /*--PRIVATE METHODS--*/
 
     /**
      * Helper method. Gets the extracted text from the file and places it where it is needed.
      *
-     * @param file
+     * @param file -
+     * @return text -
      */
-    private void getExtractedText(File file) {
+    private AnnotatedText getExtractedText(File file) {
+        AnnotatedText text;
         if (file.getName().equals(BOOK_OF_MORMON_FILENAME)) {
-            AnnotatedText bookOfMormon = new BookOfMormonExtractor().extractText(file);
-            _annotatedTexts.add(bookOfMormon);
+            text = new BookOfMormonExtractor().extractText(file);
         } else if (file.getName().equals(LATE_WAR_FILENAME)) {
-            AnnotatedText lateWar = new LateWarExtractor().extractText(file);
-            _annotatedTexts.add(lateWar);
+            text = new LateWarExtractor().extractText(file);
         } else {
             throw new RuntimeException("No extractor found for the file provided!");
         }
+
+        return text;
     }
 }

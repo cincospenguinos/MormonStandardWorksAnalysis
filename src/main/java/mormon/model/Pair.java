@@ -25,4 +25,16 @@ public class Pair<A, B> {
     public B getSecond() {
         return _b;
     }
+
+    public boolean equals(Object obj) {
+        if (obj instanceof Pair) {
+            Pair other = (Pair) obj;
+
+            if (other._a != null && other._b != null) {
+                return other._a.equals(this._a) && other._b.equals(this._b);
+            }
+        }
+
+        return false;
+    }
 }

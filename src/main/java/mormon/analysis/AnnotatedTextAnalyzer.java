@@ -1,5 +1,6 @@
 package mormon.analysis;
 
+import mormon.model.AnalysisReport;
 import mormon.model.AnnotatedText;
 import mormon.model.NGram;
 import mormon.model.TextLevel;
@@ -14,15 +15,10 @@ import java.util.Map;
  * Performs analysis of the two annotated texts provided. Provides a variety of analyses for the
  * two texts.
  */
-public class AnnotatedTextAnalyzer {
+public abstract class AnnotatedTextAnalyzer {
 
-    private AnnotatedText _textA;
-    private AnnotatedText _textB;
-
-    public AnnotatedTextAnalyzer(AnnotatedText textA, AnnotatedText textB) {
-        _textA = textA;
-        _textB = textB;
-    }
+    private AnnotatedText textA;
+    private AnnotatedText textB;
 
     /**
      * Performs similarity analysis on the two texts associated with this analyzer at
@@ -31,24 +27,29 @@ public class AnnotatedTextAnalyzer {
      * @param levelA -
      * @param levelB -
      */
-    public void performSimilarityAnalysis(TextLevel levelA, TextLevel levelB) {
-        List<NGram> textANgrams = _textA.getTextAtLevel(levelA).extractNGrams(1);
-        List<NGram> textBNgrams = _textB.getTextAtLevel(levelB).extractNGrams(1);
+    public abstract void performAnalysis(TextLevel levelA, TextLevel levelB);
 
-        Map<NGram, Integer> similarNGrams = new HashMap<NGram, Integer>();
+    /**
+     * Returns an AnalysisReport of the type of analysis that the analyzer does. If the analysis is N-Gram similarity,
+     * then this would return a report with that information.
+     *
+     * @return an AnalysisReport
+     */
+    public abstract AnalysisReport generateReport();
 
-        for (NGram a : textANgrams) {
-            for (NGram b: textBNgrams) {
-                if (a.equals(b)) {
-                    if (similarNGrams.containsKey(a)) {
-                        similarNGrams.put(a, similarNGrams.get(a) + 1);
-                    } else {
-                        similarNGrams.put(a, 1);
-                    }
-                }
-            }
-        }
+    public AnnotatedText getTextA() {
+        return textA;
+    }
 
-        // TODO: Generate a report and include it here
+    public void setTextA(AnnotatedText textA) {
+        this.textA = textA;
+    }
+
+    public AnnotatedText getTextB() {
+        return textB;
+    }
+
+    public void setTextB(AnnotatedText textB) {
+        this.textB = textB;
     }
 }

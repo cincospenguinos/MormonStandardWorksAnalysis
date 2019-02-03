@@ -33,4 +33,8 @@ public class NGram {
 
         return false;
     }
+
+    public int length() {
+        return _words.length;
+    }
 }
