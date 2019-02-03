@@ -84,7 +84,7 @@ public class LateWarExtractor implements TextExtractor {
         for (String verseText : verseChunks) {
             if (verseText.trim().length() != 0) {
                 String verseName = "verse " + verseNumber;
-                verses.put(verseName, verseText);
+                verses.put(verseName, ExtractorHelper.convertToProperFormat(verseText));
                 verseNumber++;
             }
         }

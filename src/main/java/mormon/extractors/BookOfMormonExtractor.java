@@ -129,7 +129,7 @@ public class BookOfMormonExtractor implements TextExtractor {
                     verseText = new StringBuilder();
                 }
 
-                verseText.append(line);
+                verseText.append(ExtractorHelper.convertToProperFormat(line));
                 verseText.append('\n');
             }
         }
