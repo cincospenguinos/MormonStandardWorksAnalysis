@@ -36,10 +36,24 @@ public class Main {
 
                 AnalysisReport report = simpleAnalysis.generateReport();
 
-                String reportFileNameChunk = mormonText.getName().replaceAll("\\s+", "_") + "_" + nonMormonText.getName().replaceAll("\\s+", "_");
+                String reportFileNameChunk = reportFileNameChunk(mormonText, nonMormonText);
                 outputFilesFor(reportFileNameChunk, report.toJsonStrings());
             }
         }
+    }
+
+    /**
+     * Helper method. Returns the file name chunk for two texts.
+     *
+     * @param mormonText -
+     * @param nonMormonText -
+     * @return -
+     */
+    private static String reportFileNameChunk(AnnotatedText mormonText, AnnotatedText nonMormonText) {
+        String mormonTextName = mormonText.getName().replaceAll("\\s+", "_");
+        String nonMormonTextName = nonMormonText.getName().replaceAll("\\s+", "_");
+
+        return mormonTextName + "_" + nonMormonTextName;
     }
 
     /**
@@ -94,8 +108,8 @@ public class Main {
 
     /**
      * Helper method. Does what it says on the tin.
-     * @param filename
-     * @param json
+     * @param filename -
+     * @param json -
      */
     private static void writeJsonToFile(String filename, String json) {
         String fullFileName = OUTPUT_DIR + "/" + filename;
