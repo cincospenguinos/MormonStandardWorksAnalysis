@@ -1,5 +1,7 @@
 package mormon;
 
+import mormon.analysis.AnnotatedTextAnalyzer;
+import mormon.analysis.SectionNGramSimilarityAnalysis;
 import mormon.report.AnalysisReport;
 import mormon.analysis.SimpleNGramAnalysis;
 import mormon.model.AnnotatedText;
@@ -9,6 +11,8 @@ import mormon.version.VersionInfo;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -31,16 +35,34 @@ public class Main {
 
         for (AnnotatedText mormonText : gatherer.getMormonTexts()) {
             for (AnnotatedText nonMormonText : gatherer.getNonMormonTexts()) {
-                SimpleNGramAnalysis simpleAnalysis = new SimpleNGramAnalysis(mormonText, nonMormonText);
-                simpleAnalysis.performAnalysis();
+                List<AnnotatedTextAnalyzer> analyzers = getAnalyzersFor(mormonText, nonMormonText);
+                analyzers.forEach(AnnotatedTextAnalyzer::performAnalysis);
 
-                AnalysisReport report = simpleAnalysis.generateReport();
+                List<AnalysisReport> reports = analyzers.stream()
+                        .map(AnnotatedTextAnalyzer::generateReport)
+                        .collect(Collectors.toList());
 
                 String reportFileNameChunk = reportFileNameChunk(mormonText, nonMormonText);
-                outputFilesFor(reportFileNameChunk, report.toJsonStrings());
+                reports.forEach(report -> {
+                    outputFilesFor(reportFileNameChunk, report.toJsonStrings());
+                });
             }
         }
     }
+
+    /**
+     * Helper method. Returns all the analyzers to be used for the two texts provided.
+     * @param mormonText -
+     * @param nonMormonText -
+     * @return List of analyzers
+     */
+    private static List<AnnotatedTextAnalyzer> getAnalyzersFor(AnnotatedText mormonText, AnnotatedText nonMormonText) {
+        List<AnnotatedTextAnalyzer> analyzers = new ArrayList<>();
+        analyzers.add(new SimpleNGramAnalysis(mormonText, nonMormonText));
+        analyzers.add(new SectionNGramSimilarityAnalysis(mormonText, nonMormonText));
+        return analyzers;
+    }
+
 
     /**
      * Helper method. Returns the file name chunk for two texts.
@@ -62,6 +84,7 @@ public class Main {
      * @param gatherer -
      */
     private static void createVersionReportFile(TextGatherer gatherer) {
+        ensureOutputDirCreated();
         VersionInfo info = new VersionInfo();
 
         info.setVersion(CURRENT_VERSION);

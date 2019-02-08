@@ -197,4 +197,18 @@ public class AnnotatedText {
     public String getName() {
         return _name;
     }
+
+    /**
+     * Returns a list of all of the annotated texts that are either chapters or sections. Can
+     * only be called on a root node.
+     *
+     * @return List
+     */
+    public Collection<AnnotatedText> getSectionsOrChapters() {
+        if (_textLevel != TextLevel.BOOK) {
+            throw new RuntimeException("getSectionsOrChapters() can only be called on a root node!");
+        }
+
+        return _locationsToTexts.values();
+    }
 }
