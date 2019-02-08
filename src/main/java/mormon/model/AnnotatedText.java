@@ -26,6 +26,7 @@ public class AnnotatedText {
     // Leaf node information
     private Document _text; // The literal text itself. Only relevant to leaf-node types (chapter, verse)
     private AnnotationSet _annotationSet; // The set of annotations to be generated from the text
+    private long _wordCount;
 
     public AnnotatedText(TextLevel type, boolean isMormon) {
         _textLevel = type;
@@ -56,6 +57,7 @@ public class AnnotatedText {
     public void annotate() {
         if (isLeafNode()) {
             generateAnnotationSet();
+            setWordCount();
             return;
         }
 
@@ -63,6 +65,18 @@ public class AnnotatedText {
         for (AnnotatedText t : _locationsToTexts.values()) {
             t.annotate();
         }
+    }
+
+    /**
+     * Helper method. Sets the word count of this annotated text. To be called only on a leaf node.
+     */
+    private void setWordCount() {
+        if (!isLeafNode()) {
+            throw new RuntimeException("setWordCount() may only be called on a leaf node!");
+        }
+
+        _wordCount = 0;
+        _text.sentences().forEach(sentence -> _wordCount += sentence.words().size());
     }
 
     /**
@@ -206,5 +220,13 @@ public class AnnotatedText {
 
     private boolean isLeafNode() {
         return _text != null;
+    }
+
+    public long wordCount() {
+        if (_wordCount == 0 && !isLeafNode()) {
+            _locationsToTexts.values().forEach(text -> _wordCount += text.wordCount());
+        }
+
+        return _wordCount;
     }
 }

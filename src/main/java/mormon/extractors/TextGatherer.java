@@ -25,7 +25,7 @@ public class TextGatherer {
 
     public TextGatherer(File[] files) {
         _files = files;
-        _annotatedTexts = new ArrayList<AnnotatedText>();
+        _annotatedTexts = new ArrayList<>();
     }
 
     /**
@@ -42,10 +42,10 @@ public class TextGatherer {
     /**
      * Returns all of the mormon texts that have been gathered.
      *
-     * @return
+     * @return -
      */
     public List<AnnotatedText> getMormonTexts() {
-        List<AnnotatedText> mormonTexts = new ArrayList<AnnotatedText>();
+        List<AnnotatedText> mormonTexts = new ArrayList<>();
 
         for (AnnotatedText text : _annotatedTexts) {
             if (text.isMormon()) {
@@ -59,10 +59,10 @@ public class TextGatherer {
     /**
      * Returns all of the non-mormon texts that have been gathered.
      *
-     * @return
+     * @return -
      */
     public List<AnnotatedText> getNonMormonTexts() {
-        List<AnnotatedText> nonMormonTexts = new ArrayList<AnnotatedText>();
+        List<AnnotatedText> nonMormonTexts = new ArrayList<>();
 
         for (AnnotatedText text : _annotatedTexts) {
             if (!text.isMormon()) {
@@ -71,6 +71,10 @@ public class TextGatherer {
         }
 
         return nonMormonTexts;
+    }
+
+    public List<AnnotatedText> getAllTexts() {
+        return _annotatedTexts;
     }
 
     /*--PRIVATE METHODS--*/
@@ -93,4 +97,5 @@ public class TextGatherer {
 
         return text;
     }
+
 }

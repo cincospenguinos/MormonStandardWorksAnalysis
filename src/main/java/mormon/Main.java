@@ -1,6 +1,7 @@
 package mormon;
 
 import mormon.analysis.AnnotatedTextAnalyzer;
+import mormon.analysis.MetaDataAnalysis;
 import mormon.analysis.SectionNGramSimilarityAnalysis;
 import mormon.report.AnalysisReport;
 import mormon.analysis.SimpleNGramAnalysis;
@@ -32,6 +33,7 @@ public class Main {
         gatherer.gatherTexts();
 
         createVersionReportFile(gatherer);
+        createMetaDataReportFiles(gatherer);
 
         for (AnnotatedText mormonText : gatherer.getMormonTexts()) {
             for (AnnotatedText nonMormonText : gatherer.getNonMormonTexts()) {
@@ -43,9 +45,7 @@ public class Main {
                         .collect(Collectors.toList());
 
                 String reportFileNameChunk = reportFileNameChunk(mormonText, nonMormonText);
-                reports.forEach(report -> {
-                    outputFilesFor(reportFileNameChunk, report.toJsonStrings());
-                });
+                reports.forEach(report -> outputFilesFor(reportFileNameChunk, report.toJsonStrings()));
             }
         }
     }
@@ -99,6 +99,25 @@ public class Main {
 
         String json = info.toJson();
         writeJsonToFile(VERSION_INFO_FILE_NAME, json);
+    }
+
+    /**
+     * Helper method. Creates meta data report file for each text the gatherer has annotated.
+     *
+     * @param gatherer -
+     */
+    private static void createMetaDataReportFiles(TextGatherer gatherer) {
+        gatherer.getAllTexts().forEach(text -> {
+            MetaDataAnalysis metaDataAnalysis = new MetaDataAnalysis(text);
+            metaDataAnalysis.performAnalysis();
+
+            Map<String, String> jsonStrings = metaDataAnalysis.generateReport().toJsonStrings();
+            for (Map.Entry<String, String> e : jsonStrings.entrySet()) {
+                String filename = text.getName().replaceAll("\\s+", "_") + "_" + e.getKey() + ".json";
+                String json = e.getValue();
+                writeJsonToFile(filename, json);
+            }
+        });
     }
 
     /**

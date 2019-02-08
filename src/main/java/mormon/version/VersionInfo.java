@@ -7,7 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * VersionInfoBuilder
+ * VersionInfo
  *
  * Class that builds information about the current version of this application. Helps indicate to the user of the
  * website and data visualization if there was a new version released or not.
