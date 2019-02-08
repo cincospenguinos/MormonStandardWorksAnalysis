@@ -35,7 +35,7 @@ public class AnnotatedText {
             case BOOK:
             case SECTION:
             case CHAPTER:
-                _locationsToTexts = new LinkedHashMap<String, AnnotatedText>();
+                _locationsToTexts = new LinkedHashMap<>();
                 break;
             case VERSE:
                 break;
@@ -50,7 +50,8 @@ public class AnnotatedText {
     }
 
     /**
-     * Annotates the text, gathering NGrams up and putting them into the annotation set.
+     * Gathers information on this text and includes it in the various member variables that are associated with
+     * this text.
      */
     public void annotate() {
         if (isLeafNode()) {
@@ -115,7 +116,7 @@ public class AnnotatedText {
      * @return Map
      */
     public Collection<NGram> getAllNGrams() {
-        Collection<NGram> nGrams = new HashSet<NGram>();
+        Collection<NGram> nGrams = new HashSet<>();
         if (isLeafNode()) {
             for (int n : N_GRAM_VALUES) {
                 nGrams.addAll(_annotationSet.getAllNGramsOfSize(n));
@@ -129,55 +130,6 @@ public class AnnotatedText {
         return nGrams;
     }
 
-    /**
-     * Helper method. Gathers the various annotations and puts them into this object. To be called only on leaf nodes.
-     */
-    private void generateAnnotationSet() {
-        if (!isLeafNode()) {
-            throw new RuntimeException("Cannot call this method on non-leaf nodes!");
-        }
-
-        for (Sentence sentence : _text.sentences()) {
-            for (int i = 0; i < N_GRAM_VALUES.length; i++) {
-                int n = N_GRAM_VALUES[i];
-                addNGrams(n, sentence);
-            }
-        }
-    }
-
-    /**
-     * Helper method. Adds NGrams to the annotation set, given a size and sentence to generate them from.
-     *
-     * @param nGramSize -
-     * @param sentence -
-     */
-    private void addNGrams(int nGramSize, Sentence sentence) {
-        List<String> words = sentence.words();
-
-        for (int wordIndex = 0; wordIndex < words.size(); wordIndex++) {
-            boolean pastEndOfSentence = (wordIndex + nGramSize> words.size());
-
-            if (!pastEndOfSentence) {
-                LinkedList<String> wordSet = new LinkedList<String>();
-                wordSet.add(words.get(wordIndex));
-
-                for (int i = 1; i < nGramSize; i++) {
-                    wordSet.add(words.get(wordIndex + i));
-                }
-
-                String[] nGramWords = wordSet.toArray(new String[0]);
-                NGram nGram = new NGram(nGramWords);
-                _annotationSet.addNGram(nGram, wordIndex);
-            } else {
-                break;
-            }
-        }
-    }
-
-    private boolean isLeafNode() {
-        return _text != null;
-    }
-
     public void setType(TextLevel type) {
         _textLevel = type;
     }
@@ -188,10 +140,6 @@ public class AnnotatedText {
 
     public void setName(String name) {
         _name = name;
-    }
-
-    public Document getText() {
-        return _text;
     }
 
     public String getName() {
@@ -210,5 +158,53 @@ public class AnnotatedText {
         }
 
         return _locationsToTexts.values();
+    }
+
+    /**
+     * Helper method. Gathers the various annotations and puts them into this object. To be called only on leaf nodes.
+     */
+    private void generateAnnotationSet() {
+        if (!isLeafNode()) {
+            throw new RuntimeException("Cannot call this method on non-leaf nodes!");
+        }
+
+        for (Sentence sentence : _text.sentences()) {
+            for (int n : N_GRAM_VALUES) {
+                addNGrams(n, sentence);
+            }
+        }
+    }
+
+    /**
+     * Helper method. Adds NGrams to the annotation set, given a size and sentence to generate them from.
+     *
+     * @param nGramSize -
+     * @param sentence -
+     */
+    private void addNGrams(int nGramSize, Sentence sentence) {
+        List<String> words = sentence.words();
+
+        for (int wordIndex = 0; wordIndex < words.size(); wordIndex++) {
+            boolean pastEndOfSentence = (wordIndex + nGramSize> words.size());
+
+            if (!pastEndOfSentence) {
+                LinkedList<String> wordSet = new LinkedList<>();
+                wordSet.add(words.get(wordIndex));
+
+                for (int i = 1; i < nGramSize; i++) {
+                    wordSet.add(words.get(wordIndex + i));
+                }
+
+                String[] nGramWords = wordSet.toArray(new String[0]);
+                NGram nGram = new NGram(nGramWords);
+                _annotationSet.addNGram(nGram, wordIndex);
+            } else {
+                break;
+            }
+        }
+    }
+
+    private boolean isLeafNode() {
+        return _text != null;
     }
 }

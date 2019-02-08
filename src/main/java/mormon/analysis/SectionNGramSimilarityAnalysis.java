@@ -3,6 +3,7 @@ package mormon.analysis;
 import mormon.model.AnnotatedText;
 import mormon.model.NGram;
 import mormon.report.AnalysisReport;
+import mormon.report.SectionNGramReport;
 
 import java.util.*;
 
@@ -47,6 +48,13 @@ public class SectionNGramSimilarityAnalysis extends AnnotatedTextAnalyzer {
 
     @Override
     public AnalysisReport generateReport() {
-        throw new RuntimeException("Implement me!");
+        SectionNGramReport report = new SectionNGramReport();
+
+        for (Map.Entry<String, Map<Integer, Set<NGram>>> e : sectionSimilaritySet.entrySet()) {
+            String sectionName = e.getKey();
+            report.addSection(sectionName, e.getValue());
+        }
+
+        return report;
     }
 }
